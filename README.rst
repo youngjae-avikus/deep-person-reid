@@ -1,5 +1,26 @@
 Torchreid
 ===========
+
+1. install
+    1. pip install -r requirements.txt
+    2. conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch-lts -c nvidia
+    3. pip install setuptools==59.5.0
+    4. python setup.py develop
+
+2. dataset
+    1. reid_data에 custom_data 넣기
+    2. dataloader 코드 작성
+
+
+
+
+
+
+
+
+===========
+
+
 Torchreid is a library for deep-learning person re-identification, written in `PyTorch <https://pytorch.org/>`_ and developed for our ICCV'19 project, `Omni-Scale Feature Learning for Person Re-Identification <https://arxiv.org/abs/1905.00953>`_.
 
 It features:
