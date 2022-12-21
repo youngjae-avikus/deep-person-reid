@@ -1,0 +1,3 @@
+[submodule "vehicle-ReID-baseline"]
+	path = vehicle-ReID-baseline
+	url = git@github.com:Jakel21/vehicle-ReID-baseline.git

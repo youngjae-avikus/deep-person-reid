@@ -1,19 +1,16 @@
 import torchreid
-import torch
+from torchreid.utils import (load_pretrained_weights, compute_model_complexity)
 
-weight = 'log/osnet_x1_0_norm_std_mean/model/model.pth.tar-10'
-resume = True
+weight = 'log/osnet_x1_0_veri_m1501_comb/model/model.pth.tar-25'
 
 datamanager = torchreid.data.ImageDataManager(
     root="reid-data",
-    sources=["veri"],
+    sources="veri",
     targets="veri",
     height=256,
     width=384,
     batch_size_train=32,
     batch_size_test=100,
-    norm_mean=[0.4209, 0.4206, 0.4267],
-    norm_std=[0.1869, 0.1857, 0.1851],
     transforms=["random_flip", "random_crop"]
 )
 
@@ -27,28 +24,22 @@ model = torchreid.models.build_model(
 print("num_classes", datamanager.num_train_pids)
 model = model.cuda()
 
+load_pretrained_weights(model, weight)
+num_params, flops = compute_model_complexity(model, (1, 3, 256, 384))
+        
+print('Model complexity: params={:,} flops={:,}'.format(num_params, flops))
+
 optimizer = torchreid.optim.build_optimizer(
     model,
     optim="adam",
     lr=0.0003
 )
 
-start_epoch=0
-if resume:
-    checkpoint = torch.load(weight)
-    model.load_state_dict(checkpoint['state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer'])
-    start_epoch = checkpoint['epoch']
-    print('Loaded checkpoint from "{}"'.format(weight))
-    print('- start epoch: {}'.format(start_epoch))
-    
 scheduler = torchreid.optim.build_lr_scheduler(
     optimizer,
     lr_scheduler="single_step",
     stepsize=20
 )
-
-
 
 engine = torchreid.engine.ImageSoftmaxEngine(
     datamanager,
@@ -59,10 +50,10 @@ engine = torchreid.engine.ImageSoftmaxEngine(
 )
 
 engine.run(
-    save_dir="log/osnet_x1_0_norm_std_mean",
-    start_epoch=start_epoch,
+    save_dir="log/osnet_x1_0_veri_m1501_comb",
     max_epoch=30,
     eval_freq=5,
     print_freq=200,
-    test_only=False
+    test_only=True,
+    dist_metric="cosine"
 )
