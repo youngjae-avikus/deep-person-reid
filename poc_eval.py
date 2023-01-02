@@ -1,7 +1,7 @@
 import torchreid
 from torchreid.utils import (load_pretrained_weights, compute_model_complexity)
 
-weight = 'log/osnet_x1_0_veri_m1501_comb/model/model.pth.tar-25'
+weight = 'log/osnet_x1_0_norm_std_mean/model/model.pth.tar-30'
 
 datamanager = torchreid.data.ImageDataManager(
     root="reid-data",
@@ -15,7 +15,7 @@ datamanager = torchreid.data.ImageDataManager(
 )
 
 model = torchreid.models.build_model(
-    name="osnet_x1_0",
+    name="osnet_ibn_x1_0",
     num_classes=datamanager.num_train_pids,
     loss="softmax",
     pretrained=True
@@ -50,7 +50,7 @@ engine = torchreid.engine.ImageSoftmaxEngine(
 )
 
 engine.run(
-    save_dir="log/osnet_x1_0_veri_m1501_comb",
+    save_dir="log/osnet_ibn_x1_0",
     max_epoch=30,
     eval_freq=5,
     print_freq=200,

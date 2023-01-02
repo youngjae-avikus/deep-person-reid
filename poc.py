@@ -2,7 +2,7 @@ import torchreid
 import torch
 
 weight = 'log/osnet_x1_0_norm_std_mean/model/model.pth.tar-10'
-resume = True
+resume = False
 
 datamanager = torchreid.data.ImageDataManager(
     root="reid-data",
@@ -12,13 +12,13 @@ datamanager = torchreid.data.ImageDataManager(
     width=384,
     batch_size_train=32,
     batch_size_test=100,
-    norm_mean=[0.4209, 0.4206, 0.4267],
-    norm_std=[0.1869, 0.1857, 0.1851],
+    # norm_mean=[0.4209, 0.4206, 0.4267],
+    # norm_std=[0.1869, 0.1857, 0.1851],
     transforms=["random_flip", "random_crop"]
 )
 
 model = torchreid.models.build_model(
-    name="osnet_x1_0",
+    name="osnet_ibn_x1_0",
     num_classes=datamanager.num_train_pids,
     loss="softmax",
     pretrained=True
@@ -47,8 +47,6 @@ scheduler = torchreid.optim.build_lr_scheduler(
     lr_scheduler="single_step",
     stepsize=20
 )
-
-
 
 engine = torchreid.engine.ImageSoftmaxEngine(
     datamanager,
